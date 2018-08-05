@@ -215,8 +215,7 @@ namespace FluidSym
             }
             if (keybState.IsKeyDown(Keys.Escape))
             {
-                Solver3D = new solver3d(Solver3D.dim);
-                Solver2D = new solver2d(Solver2D.dim);
+                
             }
             if (keybState.IsKeyUp(Keys.Up) && keybState.IsKeyUp(Keys.Down))
             {
@@ -224,6 +223,11 @@ namespace FluidSym
             }
             if (keybState.IsKeyUp(Keys.Right))
             {
+                if (prevKeybState.IsKeyDown(Keys.Right))
+                {
+                    Solver3D = new solver3d(Solver3D.dim);
+                    Solver2D = new solver2d(Solver2D.dim);
+                }
                 
             }
             if (keybState.IsKeyUp(Keys.Left))
@@ -239,11 +243,11 @@ namespace FluidSym
 
         protected void drawSquare()
         {
-            camPos.X = 32;
-            camPos.Y = 32;
-            camPos.Z = 78;
-            xDifference = 90;
-            yDifference = 90;
+            //camPos.X = 32;
+            //camPos.Y = 32;
+            //camPos.Z = 78;
+            //xDifference = 90;
+            //yDifference = 90;
             VertexBuffer vertexBuffer;
 
             BasicEffect basicEffect;
@@ -335,476 +339,234 @@ namespace FluidSym
 
         protected void drawSmoke()
         {
-            VertexBuffer vertexBuffer;
+            //VertexBuffer vertexBuffer;
 
-            BasicEffect basicEffect;
-            basicEffect = new BasicEffect(GraphicsDevice);
+            //BasicEffect basicEffect;
+            //basicEffect = new BasicEffect(GraphicsDevice);
 
-            //basicEffect.World = world;
-            basicEffect.World = Matrix.CreateTranslation(-Solver3D.dim / 2, 10, 0);
-            basicEffect.View = view;
-            basicEffect.Projection = projection;
-            basicEffect.VertexColorEnabled = true;
-            //basicEffect.LightingEnabled = true;
-            //basicEffect.AmbientLightColor = new Vector3(0.2f, 0.2f, 0.2f);
+            ////basicEffect.World = world;
+            //basicEffect.World = Matrix.CreateTranslation(-Solver3D.dim / 2, 10, 0);
+            //basicEffect.View = view;
+            //basicEffect.Projection = projection;
+            //basicEffect.VertexColorEnabled = true;
+            ////basicEffect.LightingEnabled = true;
+            ////basicEffect.AmbientLightColor = new Vector3(0.2f, 0.2f, 0.2f);
 
-            RasterizerState rasterizerState = new RasterizerState();
-            rasterizerState.CullMode = CullMode.None;
-
-            GraphicsDevice.RasterizerState = rasterizerState;
-            GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
-            int dim1 = Solver3D.dim + 1;
-            VertexPositionColor[] vertices = new VertexPositionColor[12 * 3 * dim1 * dim1 * dim1];
-            int total = 0;
-            float h = 1.0f;
-            float edge = h;
-            float side = edge / 2;
-            float x, y, z;
-            Vector4 d000, d100, d010, d001,
-                           d110, d101, d011, d111;
-
-            for (int i = 0; i <= Solver3D.dim; i++)
-            {
-                x = (i - 0.5f) * h;
-
-                for (int j = 0; j <= Solver3D.dim; j++)
-                {
-                    y = (j - 0.5f) * h;
-
-                    for (int k = 0; k <= Solver3D.dim; k++)
-                    {
-                        z = (k - 0.5f) * h;
-
-                        d000 = Solver3D.col[i, j, k];
-                        d000.W = 0.01f;
-                        d100 = Solver3D.col[i + 1, j, k];
-                        d100.W = 0.01f;
-                        d010 = Solver3D.col[i, j + 1, k];
-                        d010.W = 0.01f;
-                        d001 = Solver3D.col[i, j, k + 1];
-                        d001.W = 0.01f;
-                        d110 = Solver3D.col[i + 1, j + 1, k];
-                        d110.W = 0.01f;
-                        d011 = Solver3D.col[i, j + 1, k + 1];
-                        d011.W = 0.01f;
-                        d101 = Solver3D.col[i + 1, j, k + 1];
-                        d101.W = 0.01f;
-                        d111 = Solver3D.col[i + 1, j + 1, k + 1];
-                        d111.W = 0.01f;
-
-                        vertices[total].Position.X = x;
-                        vertices[total].Position.Y = y;
-                        vertices[total].Position.Z = z;
-                        vertices[total++].Color = new Color(d000);
-                        vertices[total].Position.X = x;
-                        vertices[total].Position.Y = y + edge;
-                        vertices[total].Position.Z = z;
-                        vertices[total++].Color = new Color(d010);
-                        vertices[total].Position.X = x + edge;
-                        vertices[total].Position.Y = y;
-                        vertices[total].Position.Z = z;
-                        vertices[total++].Color = new Color(d100);
-
-                        vertices[total].Position.X = x + edge;
-                        vertices[total].Position.Y = y + edge;
-                        vertices[total].Position.Z = z;
-                        vertices[total++].Color = new Color(d110);
-                        vertices[total].Position.X = x + edge;
-                        vertices[total].Position.Y = y;
-                        vertices[total].Position.Z = z;
-                        vertices[total++].Color = new Color(d100);
-                        vertices[total].Position.X = x;
-                        vertices[total].Position.Y = y + edge;
-                        vertices[total].Position.Z = z;
-                        vertices[total++].Color = new Color(d010);
-                        //front
-                        vertices[total].Position.X = x + edge;
-                        vertices[total].Position.Y = y;
-                        vertices[total].Position.Z = z;
-                        vertices[total++].Color = new Color(d100);
-                        vertices[total].Position.X = x + edge;
-                        vertices[total].Position.Y = y + edge;
-                        vertices[total].Position.Z = z;
-                        vertices[total++].Color = new Color(d110);
-                        vertices[total].Position.X = x + edge;
-                        vertices[total].Position.Y = y;
-                        vertices[total].Position.Z = z - edge;
-                        vertices[total++].Color = new Color(d101);
-
-                        vertices[total].Position.X = x + edge;
-                        vertices[total].Position.Y = y + edge;
-                        vertices[total].Position.Z = z - edge;
-                        vertices[total++].Color = new Color(d111);
-                        vertices[total].Position.X = x + edge;
-                        vertices[total].Position.Y = y;
-                        vertices[total].Position.Z = z - edge;
-                        vertices[total++].Color = new Color(d101);
-                        vertices[total].Position.X = x + edge;
-                        vertices[total].Position.Y = y + edge;
-                        vertices[total].Position.Z = z;
-                        vertices[total++].Color = new Color(d110);
-                        //right
-                        vertices[total].Position.X = x;
-                        vertices[total].Position.Y = y;
-                        vertices[total].Position.Z = z - edge;
-                        vertices[total++].Color = new Color(d001);
-                        vertices[total].Position.X = x;
-                        vertices[total].Position.Y = y;
-                        vertices[total].Position.Z = z;
-                        vertices[total++].Color = new Color(d000);
-                        vertices[total].Position.X = x + edge;
-                        vertices[total].Position.Y = y;
-                        vertices[total].Position.Z = z - edge;
-                        vertices[total++].Color = new Color(d101);
-
-                        vertices[total].Position.X = x + edge;
-                        vertices[total].Position.Y = y;
-                        vertices[total].Position.Z = z;
-                        vertices[total++].Color = new Color(d100);
-                        vertices[total].Position.X = x + edge;
-                        vertices[total].Position.Y = y;
-                        vertices[total].Position.Z = z - edge;
-                        vertices[total++].Color = new Color(d101);
-                        vertices[total].Position.X = x;
-                        vertices[total].Position.Y = y;
-                        vertices[total].Position.Z = z;
-                        vertices[total++].Color = new Color(d000);
-                        //bottom
-                        vertices[total].Position.X = x;
-                        vertices[total].Position.Y = y;
-                        vertices[total].Position.Z = z - edge;
-                        vertices[total++].Color = new Color(d001);
-                        vertices[total].Position.X = x;
-                        vertices[total].Position.Y = y + edge;
-                        vertices[total].Position.Z = z - edge;
-                        vertices[total++].Color = new Color(d011);
-                        vertices[total].Position.X = x;
-                        vertices[total].Position.Y = y;
-                        vertices[total].Position.Z = z;
-                        vertices[total++].Color = new Color(d000);
-
-                        vertices[total].Position.X = x;
-                        vertices[total].Position.Y = y + edge;
-                        vertices[total].Position.Z = z;
-                        vertices[total++].Color = new Color(d010);
-                        vertices[total].Position.X = x;
-                        vertices[total].Position.Y = y;
-                        vertices[total].Position.Z = z;
-                        vertices[total++].Color = new Color(d000);
-                        vertices[total].Position.X = x;
-                        vertices[total].Position.Y = y + edge;
-                        vertices[total].Position.Z = z - edge;
-                        vertices[total++].Color = new Color(d011);
-                        //left
-                        vertices[total].Position.X = x + edge;
-                        vertices[total].Position.Y = y;
-                        vertices[total].Position.Z = z - edge;
-                        vertices[total++].Color = new Color(d101);
-                        vertices[total].Position.X = x + edge;
-                        vertices[total].Position.Y = y + edge;
-                        vertices[total].Position.Z = z - edge;
-                        vertices[total++].Color = new Color(d111);
-                        vertices[total].Position.X = x;
-                        vertices[total].Position.Y = y;
-                        vertices[total].Position.Z = z - edge;
-                        vertices[total++].Color = new Color(d001);
-
-                        vertices[total].Position.X = x;
-                        vertices[total].Position.Y = y + edge;
-                        vertices[total].Position.Z = z - edge;
-                        vertices[total++].Color = new Color(d011);
-                        vertices[total].Position.X = x;
-                        vertices[total].Position.Y = y;
-                        vertices[total].Position.Z = z - edge;
-                        vertices[total++].Color = new Color(d001);
-                        vertices[total].Position.X = x + edge;
-                        vertices[total].Position.Y = y + edge;
-                        vertices[total].Position.Z = z - edge;
-                        vertices[total++].Color = new Color(d111);
-                        //back
-                        vertices[total].Position.X = x;
-                        vertices[total].Position.Y = y + edge;
-                        vertices[total].Position.Z = z;
-                        vertices[total++].Color = new Color(d010);
-                        vertices[total].Position.X = x;
-                        vertices[total].Position.Y = y + edge;
-                        vertices[total].Position.Z = z - edge;
-                        vertices[total++].Color = new Color(d011);
-                        vertices[total].Position.X = x + edge;
-                        vertices[total].Position.Y = y + edge;
-                        vertices[total].Position.Z = z;
-                        vertices[total++].Color = new Color(d110);
-
-                        vertices[total].Position.X = x + edge;
-                        vertices[total].Position.Y = y + edge;
-                        vertices[total].Position.Z = z - edge;
-                        vertices[total++].Color = new Color(d111);
-                        vertices[total].Position.X = x + edge;
-                        vertices[total].Position.Y = y + edge;
-                        vertices[total].Position.Z = z;
-                        vertices[total++].Color = new Color(d110);
-                        vertices[total].Position.X = x;
-                        vertices[total].Position.Y = y + edge;
-                        vertices[total].Position.Z = z - edge;
-                        vertices[total++].Color = new Color(d011);
-                        //top
-                    }
-                }
-            }
-            vertexBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColor), 12 * 3 * dim1 * dim1 * dim1, BufferUsage.WriteOnly);
-            vertexBuffer.SetData<VertexPositionColor>(vertices);
-            GraphicsDevice.SetVertexBuffer(vertexBuffer);
-            GraphicsDevice.BlendState = BlendState.AlphaBlend;
-            //GraphicsDevice.BlendState = BlendState.Additive;
-            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 12 * dim1 * dim1 * dim1);
-                //GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 12 * 3 * 8000, 0, 12 * 8000);
-            }
-            GraphicsDevice.BlendState = BlendState.Opaque;
-        }
-
-        protected void drawCube()
-        {
-            VertexBuffer vertexBuffer;
-
-            BasicEffect basicEffect;
-            basicEffect = new BasicEffect(GraphicsDevice);
-
-            //basicEffect.World = world;
-            basicEffect.World = Matrix.CreateScale (0.1f) * Matrix.CreateTranslation(0, 0, 0);
-
-            basicEffect.View = view;
-            basicEffect.Projection = projection;
-            basicEffect.VertexColorEnabled = true;
-            //basicEffect.LightingEnabled = true;
-            //basicEffect.AmbientLightColor = new Vector3(0.2f, 0.2f, 0.2f);
-
-            RasterizerState rasterizerState = new RasterizerState();
+            //RasterizerState rasterizerState = new RasterizerState();
             //rasterizerState.CullMode = CullMode.None;
 
-            GraphicsDevice.RasterizerState = rasterizerState;
-            int dim1 = 8;
-            VertexPositionColor[] vertices = new VertexPositionColor[12 * 3 * dim1 * dim1 * dim1 * 8];
+            //GraphicsDevice.RasterizerState = rasterizerState;
+            //GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
+            //int dim1 = Solver3D.dim + 1;
+            //VertexPositionColor[] vertices = new VertexPositionColor[12 * 3 * dim1 * dim1 * dim1];
+            //int total = 0;
+            //float h = 1.0f;
+            //float edge = h;
+            //float side = edge / 2;
+            //float x, y, z;
+            //Vector4 d000, d100, d010, d001,
+            //               d110, d101, d011, d111;
 
-            int total = 0;
-            float h = 1.0f;
-            float edge = h;
-            float side = edge / 2;
-            for (int i = -dim1; i < dim1; i++)
-            {
-                for (int j = -dim1; j < dim1; j++)
-                {
-                    for (int k = -dim1; k < dim1; k++)
-                    {
-                        vertices[total].Position.X = i * h;
-                        vertices[total].Position.Y = j * h;
-                        vertices[total].Position.Z = k * h;
-                        vertices[total].Color = Color.Blue;
-                        vertices[total++].Color.A = 128;
-                        vertices[total].Position.X = i * h;
-                        vertices[total].Position.Y = j * h + edge;
-                        vertices[total].Position.Z = k * h;
-                        vertices[total].Color = Color.Blue;
-                        vertices[total++].Color.A = 128;
-                        vertices[total].Position.X = i * h + edge;
-                        vertices[total].Position.Y = j * h;
-                        vertices[total].Position.Z = k * h;
-                        vertices[total].Color = Color.Blue;
-                        vertices[total++].Color.A = 128;
+            //for (int i = 0; i <= Solver3D.dim; i++)
+            //{
+            //    x = (i - 0.5f) * h;
 
-                        vertices[total].Position.X = i * h + edge;
-                        vertices[total].Position.Y = j * h + edge;
-                        vertices[total].Position.Z = k * h;
-                        vertices[total].Color = Color.Blue;
-                        vertices[total++].Color.A = 128;
-                        vertices[total].Position.X = i * h + edge;
-                        vertices[total].Position.Y = j * h;
-                        vertices[total].Position.Z = k * h;
-                        vertices[total].Color = Color.Blue;
-                        vertices[total++].Color.A = 128;
-                        vertices[total].Position.X = i * h;
-                        vertices[total].Position.Y = j * h + edge;
-                        vertices[total].Position.Z = k * h;
-                        vertices[total].Color = Color.Blue;
-                        vertices[total++].Color.A = 128;
-                        //front
-                        vertices[total].Position.X = i * h + edge;
-                        vertices[total].Position.Y = j * h;
-                        vertices[total].Position.Z = k * h;
-                        vertices[total].Color = Color.Red;
-                        vertices[total++].Color.A = 128;
-                        vertices[total].Position.X = i * h + edge;
-                        vertices[total].Position.Y = j * h + edge;
-                        vertices[total].Position.Z = k * h;
-                        vertices[total].Color = Color.Red;
-                        vertices[total++].Color.A = 128;
-                        vertices[total].Position.X = i * h + edge;
-                        vertices[total].Position.Y = j * h;
-                        vertices[total].Position.Z = k * h - edge;
-                        vertices[total].Color = Color.Red;
-                        vertices[total++].Color.A = 128;
-                        
-                        vertices[total].Position.X = i * h + edge;
-                        vertices[total].Position.Y = j * h + edge;
-                        vertices[total].Position.Z = k * h - edge;
-                        vertices[total].Color = Color.Red;
-                        vertices[total++].Color.A = 128;
-                        vertices[total].Position.X = i * h + edge;
-                        vertices[total].Position.Y = j * h;
-                        vertices[total].Position.Z = k * h - edge;
-                        vertices[total].Color = Color.Red;
-                        vertices[total++].Color.A = 128;
-                        vertices[total].Position.X = i * h + edge;
-                        vertices[total].Position.Y = j * h + edge;
-                        vertices[total].Position.Z = k * h;
-                        vertices[total].Color = Color.Red;
-                        vertices[total++].Color.A = 128;
-                        //right
-                        vertices[total].Position.X = i * h;
-                        vertices[total].Position.Y = j * h;
-                        vertices[total].Position.Z = k * h - edge;
-                        vertices[total].Color = Color.Green;
-                        vertices[total++].Color.A = 128;
-                        vertices[total].Position.X = i * h;
-                        vertices[total].Position.Y = j * h;
-                        vertices[total].Position.Z = k * h;
-                        vertices[total].Color = Color.Green;
-                        vertices[total++].Color.A = 128;
-                        vertices[total].Position.X = i * h + edge;
-                        vertices[total].Position.Y = j * h;
-                        vertices[total].Position.Z = k * h - edge;
-                        vertices[total].Color = Color.Green;
-                        vertices[total++].Color.A = 128;
+            //    for (int j = 0; j <= Solver3D.dim; j++)
+            //    {
+            //        y = (j - 0.5f) * h;
 
-                        vertices[total].Position.X = i * h + edge;
-                        vertices[total].Position.Y = j * h;
-                        vertices[total].Position.Z = k * h;
-                        vertices[total].Color = Color.Green;
-                        vertices[total++].Color.A = 128;
-                        vertices[total].Position.X = i * h + edge;
-                        vertices[total].Position.Y = j * h;
-                        vertices[total].Position.Z = k * h - edge;
-                        vertices[total].Color = Color.Green;
-                        vertices[total++].Color.A = 128;
-                        vertices[total].Position.X = i * h;
-                        vertices[total].Position.Y = j * h;
-                        vertices[total].Position.Z = k * h;
-                        vertices[total].Color = Color.Green;
-                        vertices[total++].Color.A = 128;
-                        //bottom
-                        vertices[total].Position.X = i * h;
-                        vertices[total].Position.Y = j * h;
-                        vertices[total].Position.Z = k * h - edge;
-                        vertices[total].Color = Color.Magenta;
-                        vertices[total++].Color.A = 128;
-                        vertices[total].Position.X = i * h;
-                        vertices[total].Position.Y = j * h + edge;
-                        vertices[total].Position.Z = k * h - edge;
-                        vertices[total].Color = Color.Magenta;
-                        vertices[total++].Color.A = 128;
-                        vertices[total].Position.X = i * h;
-                        vertices[total].Position.Y = j * h;
-                        vertices[total].Position.Z = k * h;
-                        vertices[total].Color = Color.Magenta;
-                        vertices[total++].Color.A = 128;
+            //        for (int k = 0; k <= Solver3D.dim; k++)
+            //        {
+            //            z = (k - 0.5f) * h;
 
-                        vertices[total].Position.X = i * h;
-                        vertices[total].Position.Y = j * h + edge;
-                        vertices[total].Position.Z = k * h;
-                        vertices[total].Color = Color.Magenta;
-                        vertices[total++].Color.A = 128;
-                        vertices[total].Position.X = i * h;
-                        vertices[total].Position.Y = j * h;
-                        vertices[total].Position.Z = k * h;
-                        vertices[total].Color = Color.Magenta;
-                        vertices[total++].Color.A = 128;
-                        vertices[total].Position.X = i * h;
-                        vertices[total].Position.Y = j * h + edge;
-                        vertices[total].Position.Z = k * h - edge;
-                        vertices[total].Color = Color.Magenta;
-                        vertices[total++].Color.A = 128;
-                        //left
-                        vertices[total].Position.X = i * h + edge;
-                        vertices[total].Position.Y = j * h;
-                        vertices[total].Position.Z = k * h - edge;
-                        vertices[total].Color = Color.Cyan;
-                        vertices[total++].Color.A = 128;
-                        vertices[total].Position.X = i * h + edge;
-                        vertices[total].Position.Y = j * h + edge;
-                        vertices[total].Position.Z = k * h - edge;
-                        vertices[total].Color = Color.Cyan;
-                        vertices[total++].Color.A = 128;
-                        vertices[total].Position.X = i * h;
-                        vertices[total].Position.Y = j * h;
-                        vertices[total].Position.Z = k * h - edge;
-                        vertices[total].Color = Color.Cyan;
-                        vertices[total++].Color.A = 128;
+            //            d000 = Solver3D.col[i, j, k];
+            //            d000.W = 0.01f;
+            //            d100 = Solver3D.col[i + 1, j, k];
+            //            d100.W = 0.01f;
+            //            d010 = Solver3D.col[i, j + 1, k];
+            //            d010.W = 0.01f;
+            //            d001 = Solver3D.col[i, j, k + 1];
+            //            d001.W = 0.01f;
+            //            d110 = Solver3D.col[i + 1, j + 1, k];
+            //            d110.W = 0.01f;
+            //            d011 = Solver3D.col[i, j + 1, k + 1];
+            //            d011.W = 0.01f;
+            //            d101 = Solver3D.col[i + 1, j, k + 1];
+            //            d101.W = 0.01f;
+            //            d111 = Solver3D.col[i + 1, j + 1, k + 1];
+            //            d111.W = 0.01f;
 
-                        vertices[total].Position.X = i * h;
-                        vertices[total].Position.Y = j * h + edge;
-                        vertices[total].Position.Z = k * h - edge;
-                        vertices[total].Color = Color.Cyan;
-                        vertices[total++].Color.A = 128;
-                        vertices[total].Position.X = i * h;
-                        vertices[total].Position.Y = j * h;
-                        vertices[total].Position.Z = k * h - edge;
-                        vertices[total].Color = Color.Cyan;
-                        vertices[total++].Color.A = 128;
-                        vertices[total].Position.X = i * h + edge;
-                        vertices[total].Position.Y = j * h + edge;
-                        vertices[total].Position.Z = k * h - edge;
-                        vertices[total].Color = Color.Cyan;
-                        vertices[total++].Color.A = 128;
-                        //back
-                        vertices[total].Position.X = i * h;
-                        vertices[total].Position.Y = j * h + edge;
-                        vertices[total].Position.Z = k * h;
-                        vertices[total].Color = Color.Yellow;
-                        vertices[total++].Color.A = 128;
-                        vertices[total].Position.X = i * h;
-                        vertices[total].Position.Y = j * h + edge;
-                        vertices[total].Position.Z = k * h - edge;
-                        vertices[total].Color = Color.Yellow;
-                        vertices[total++].Color.A = 128;
-                        vertices[total].Position.X = i * h + edge;
-                        vertices[total].Position.Y = j * h + edge;
-                        vertices[total].Position.Z = k * h;
-                        vertices[total].Color = Color.Yellow;
-                        vertices[total++].Color.A = 128;
+            //            vertices[total].Position.X = x;
+            //            vertices[total].Position.Y = y;
+            //            vertices[total].Position.Z = z;
+            //            vertices[total++].Color = new Color(d000);
+            //            vertices[total].Position.X = x;
+            //            vertices[total].Position.Y = y + edge;
+            //            vertices[total].Position.Z = z;
+            //            vertices[total++].Color = new Color(d010);
+            //            vertices[total].Position.X = x + edge;
+            //            vertices[total].Position.Y = y;
+            //            vertices[total].Position.Z = z;
+            //            vertices[total++].Color = new Color(d100);
 
-                        vertices[total].Position.X = i * h + edge;
-                        vertices[total].Position.Y = j * h + edge;
-                        vertices[total].Position.Z = k * h - edge;
-                        vertices[total].Color = Color.Yellow;
-                        vertices[total++].Color.A = 128;
-                        vertices[total].Position.X = i * h + edge;
-                        vertices[total].Position.Y = j * h + edge;
-                        vertices[total].Position.Z = k * h;
-                        vertices[total].Color = Color.Yellow;
-                        vertices[total++].Color.A = 128;
-                        vertices[total].Position.X = i * h;
-                        vertices[total].Position.Y = j * h + edge;
-                        vertices[total].Position.Z = k * h - edge;
-                        vertices[total].Color = Color.Yellow;
-                        vertices[total++].Color.A = 128;
-                        //top
-                    }
-                }
-            }
-            vertexBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColor), 12 * 3 * dim1 * dim1 * dim1 * 8, BufferUsage.WriteOnly);
-            vertexBuffer.SetData<VertexPositionColor>(vertices);
-            GraphicsDevice.SetVertexBuffer(vertexBuffer);
+            //            vertices[total].Position.X = x + edge;
+            //            vertices[total].Position.Y = y + edge;
+            //            vertices[total].Position.Z = z;
+            //            vertices[total++].Color = new Color(d110);
+            //            vertices[total].Position.X = x + edge;
+            //            vertices[total].Position.Y = y;
+            //            vertices[total].Position.Z = z;
+            //            vertices[total++].Color = new Color(d100);
+            //            vertices[total].Position.X = x;
+            //            vertices[total].Position.Y = y + edge;
+            //            vertices[total].Position.Z = z;
+            //            vertices[total++].Color = new Color(d010);
+            //            //front
+            //            vertices[total].Position.X = x + edge;
+            //            vertices[total].Position.Y = y;
+            //            vertices[total].Position.Z = z;
+            //            vertices[total++].Color = new Color(d100);
+            //            vertices[total].Position.X = x + edge;
+            //            vertices[total].Position.Y = y + edge;
+            //            vertices[total].Position.Z = z;
+            //            vertices[total++].Color = new Color(d110);
+            //            vertices[total].Position.X = x + edge;
+            //            vertices[total].Position.Y = y;
+            //            vertices[total].Position.Z = z - edge;
+            //            vertices[total++].Color = new Color(d101);
+
+            //            vertices[total].Position.X = x + edge;
+            //            vertices[total].Position.Y = y + edge;
+            //            vertices[total].Position.Z = z - edge;
+            //            vertices[total++].Color = new Color(d111);
+            //            vertices[total].Position.X = x + edge;
+            //            vertices[total].Position.Y = y;
+            //            vertices[total].Position.Z = z - edge;
+            //            vertices[total++].Color = new Color(d101);
+            //            vertices[total].Position.X = x + edge;
+            //            vertices[total].Position.Y = y + edge;
+            //            vertices[total].Position.Z = z;
+            //            vertices[total++].Color = new Color(d110);
+            //            //right
+            //            vertices[total].Position.X = x;
+            //            vertices[total].Position.Y = y;
+            //            vertices[total].Position.Z = z - edge;
+            //            vertices[total++].Color = new Color(d001);
+            //            vertices[total].Position.X = x;
+            //            vertices[total].Position.Y = y;
+            //            vertices[total].Position.Z = z;
+            //            vertices[total++].Color = new Color(d000);
+            //            vertices[total].Position.X = x + edge;
+            //            vertices[total].Position.Y = y;
+            //            vertices[total].Position.Z = z - edge;
+            //            vertices[total++].Color = new Color(d101);
+
+            //            vertices[total].Position.X = x + edge;
+            //            vertices[total].Position.Y = y;
+            //            vertices[total].Position.Z = z;
+            //            vertices[total++].Color = new Color(d100);
+            //            vertices[total].Position.X = x + edge;
+            //            vertices[total].Position.Y = y;
+            //            vertices[total].Position.Z = z - edge;
+            //            vertices[total++].Color = new Color(d101);
+            //            vertices[total].Position.X = x;
+            //            vertices[total].Position.Y = y;
+            //            vertices[total].Position.Z = z;
+            //            vertices[total++].Color = new Color(d000);
+            //            //bottom
+            //            vertices[total].Position.X = x;
+            //            vertices[total].Position.Y = y;
+            //            vertices[total].Position.Z = z - edge;
+            //            vertices[total++].Color = new Color(d001);
+            //            vertices[total].Position.X = x;
+            //            vertices[total].Position.Y = y + edge;
+            //            vertices[total].Position.Z = z - edge;
+            //            vertices[total++].Color = new Color(d011);
+            //            vertices[total].Position.X = x;
+            //            vertices[total].Position.Y = y;
+            //            vertices[total].Position.Z = z;
+            //            vertices[total++].Color = new Color(d000);
+
+            //            vertices[total].Position.X = x;
+            //            vertices[total].Position.Y = y + edge;
+            //            vertices[total].Position.Z = z;
+            //            vertices[total++].Color = new Color(d010);
+            //            vertices[total].Position.X = x;
+            //            vertices[total].Position.Y = y;
+            //            vertices[total].Position.Z = z;
+            //            vertices[total++].Color = new Color(d000);
+            //            vertices[total].Position.X = x;
+            //            vertices[total].Position.Y = y + edge;
+            //            vertices[total].Position.Z = z - edge;
+            //            vertices[total++].Color = new Color(d011);
+            //            //left
+            //            vertices[total].Position.X = x + edge;
+            //            vertices[total].Position.Y = y;
+            //            vertices[total].Position.Z = z - edge;
+            //            vertices[total++].Color = new Color(d101);
+            //            vertices[total].Position.X = x + edge;
+            //            vertices[total].Position.Y = y + edge;
+            //            vertices[total].Position.Z = z - edge;
+            //            vertices[total++].Color = new Color(d111);
+            //            vertices[total].Position.X = x;
+            //            vertices[total].Position.Y = y;
+            //            vertices[total].Position.Z = z - edge;
+            //            vertices[total++].Color = new Color(d001);
+
+            //            vertices[total].Position.X = x;
+            //            vertices[total].Position.Y = y + edge;
+            //            vertices[total].Position.Z = z - edge;
+            //            vertices[total++].Color = new Color(d011);
+            //            vertices[total].Position.X = x;
+            //            vertices[total].Position.Y = y;
+            //            vertices[total].Position.Z = z - edge;
+            //            vertices[total++].Color = new Color(d001);
+            //            vertices[total].Position.X = x + edge;
+            //            vertices[total].Position.Y = y + edge;
+            //            vertices[total].Position.Z = z - edge;
+            //            vertices[total++].Color = new Color(d111);
+            //            //back
+            //            vertices[total].Position.X = x;
+            //            vertices[total].Position.Y = y + edge;
+            //            vertices[total].Position.Z = z;
+            //            vertices[total++].Color = new Color(d010);
+            //            vertices[total].Position.X = x;
+            //            vertices[total].Position.Y = y + edge;
+            //            vertices[total].Position.Z = z - edge;
+            //            vertices[total++].Color = new Color(d011);
+            //            vertices[total].Position.X = x + edge;
+            //            vertices[total].Position.Y = y + edge;
+            //            vertices[total].Position.Z = z;
+            //            vertices[total++].Color = new Color(d110);
+
+            //            vertices[total].Position.X = x + edge;
+            //            vertices[total].Position.Y = y + edge;
+            //            vertices[total].Position.Z = z - edge;
+            //            vertices[total++].Color = new Color(d111);
+            //            vertices[total].Position.X = x + edge;
+            //            vertices[total].Position.Y = y + edge;
+            //            vertices[total].Position.Z = z;
+            //            vertices[total++].Color = new Color(d110);
+            //            vertices[total].Position.X = x;
+            //            vertices[total].Position.Y = y + edge;
+            //            vertices[total].Position.Z = z - edge;
+            //            vertices[total++].Color = new Color(d011);
+            //            //top
+            //        }
+            //    }
+            //}
+            //vertexBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColor), 12 * 3 * dim1 * dim1 * dim1, BufferUsage.WriteOnly);
+            //vertexBuffer.SetData<VertexPositionColor>(vertices);
+            //GraphicsDevice.SetVertexBuffer(vertexBuffer);
             //GraphicsDevice.BlendState = BlendState.AlphaBlend;
-            //GraphicsDevice.BlendState = BlendState.Additive;
-            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 12 * dim1 * dim1 * dim1 * 8);
-                //GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 12 * 3 * 8000, 0, 12 * 8000);
-            }
-            GraphicsDevice.BlendState = BlendState.Opaque;
+            ////GraphicsDevice.BlendState = BlendState.Additive;
+            //foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
+            //{
+            //    pass.Apply();
+            //    GraphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 12 * dim1 * dim1 * dim1);
+            //    //GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 12 * 3 * 8000, 0, 12 * 8000);
+            //}
+            //GraphicsDevice.BlendState = BlendState.Opaque;
         }
 
         protected void DrawTerrain()
